@@ -249,9 +249,9 @@ jobs:
           cmake --build . --config Release
       - name: Rename library
         run: |
-          mv -v ${{ runner.temp }}/soloud/contrib/build/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/libsoloud_ios.a
+          mv -v ${{ runner.temp }}/soloud/contrib/build/Release-iphoneos/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/Release-iphoneos/libsoloud_ios.a
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: libsoloud_ios.a
-          path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_ios.a
+          path: ${{ runner.temp }}/soloud/contrib/build/Release-iphoneos/libsoloud_ios.a
