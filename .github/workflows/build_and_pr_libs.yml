@@ -255,3 +255,41 @@ jobs:
         with:
           name: libsoloud_android.a
           path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_android.a
+
+  build-bullet3-linux-arm64:
+    name: Build Bullet3 (linux/arm64)
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - name: Install Build Dependencies (packages)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            ca-certificates \
+            cmake \
+            git
+      - name: Build Bullet3
+        run: |
+          https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
+          mkdir -p ${{ runner.temp }}/bullet3/build_mingw_static
+          cd ${{ runner.temp }}/bullet3/build_mingw_static
+          cmake ../ \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DBUILD_CPU_DEMOS=OFF \
+            -DBUILD_OPENGL3_DEMOS=OFF \
+            -DBUILD_BULLET2_DEMOS=OFF \
+            -DBUILD_EXTRAS=OFF \
+            -DBUILD_UNIT_TESTS=OFF \
+            -DUSE_GLUT=OFF \
+            -DINSTALL_LIBS=ON
+          make -j 2
+          ls -laR
+#      - name: Rename library
+#        run: |
+#          mv -v ${{ runner.temp }}/soloud/contrib/build/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/libsoloud_linux_arm64.a
+#      - name: Upload binary
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: libsoloud_linux_arm64.a
+#          path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_linux_arm64.a
