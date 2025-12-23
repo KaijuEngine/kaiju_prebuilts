@@ -207,6 +207,7 @@ jobs:
           mkdir -p ${{ runner.temp }}/soloud/contrib/build
           cd ${{ runner.temp }}/soloud/contrib/build
           cmake .. -G "Unix Makefiles" \
+            "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" \
             "-DCMAKE_TOOLCHAIN_FILE=${{ runner.temp }}/IosCMakeToolchain/ios.toolchain.cmake" \
             -DPLATFORM=OS64COMBINED \
             -DCMAKE_BUILD_TYPE=Release \
