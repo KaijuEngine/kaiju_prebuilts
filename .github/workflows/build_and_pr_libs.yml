@@ -285,11 +285,22 @@ jobs:
             -DINSTALL_LIBS=ON
           make -j 2
           find . -type f -iname "libBullet*.a"
-#      - name: Rename library
-#        run: |
-#          mv -v ${{ runner.temp }}/soloud/contrib/build/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/libsoloud_linux_arm64.a
-#      - name: Upload binary
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: libsoloud_linux_arm64.a
-#          path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_linux_arm64.a
+      - name: Rename library
+        working-directory: ${{ runner.temp }}/bullet3/build_mingw_static
+        run: |
+          cp -v ./src/Bullet3Geometry/libBullet3Geometry.a ${{ github.workspace }}/libBullet3Geometry_linux_arm64.a
+          cp -v ./src/BulletDynamics/libBulletDynamics.a ${{ github.workspace }}/libBulletDynamics_linux_arm64.a
+          cp -v ./src/Bullet3Collision/libBullet3Collision.a ${{ github.workspace }}/libBullet3Collision_linux_arm64.a
+          cp -v ./src/Bullet3Common/libBullet3Common.a ${{ github.workspace }}/libBullet3Common_linux_arm64.a
+          cp -v ./src/Bullet3OpenCL/libBullet3OpenCL_clew.a ${{ github.workspace }}/libBullet3OpenCL_clew_linux_arm64.a
+          cp -v ./src/BulletSoftBody/libBulletSoftBody.a ${{ github.workspace }}/libBulletSoftBody_linux_arm64.a
+          cp -v /src/Bullet3Serialize/Bullet2FileLoader/libBullet2FileLoader.a ${{ github.workspace }}/libBullet2FileLoader_linux_arm64.a
+          cp -v ./src/Bullet3Dynamics/libBullet3Dynamics.a ${{ github.workspace }}/libBullet3Dynamics_linux_arm64.a
+          cp -v ./src/BulletInverseDynamics/libBulletInverseDynamics.a ${{ github.workspace }}/libBulletInverseDynamics_linux_arm64.a
+          cp -v ./src/BulletCollision/libBulletCollision.a ${{ github.workspace }}/libBulletCollision_linux_arm64.a
+          ls -laR ${{ github.workspace }}
+      - name: Upload library
+        uses: actions/upload-artifact@v6
+        with:
+          name: bullet3_libs_linux_arm64
+          path: ${{ github.workspace }}/*.a
