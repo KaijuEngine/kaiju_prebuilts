@@ -82,7 +82,7 @@ jobs:
           git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
           mkdir -p ${{ runner.temp }}/soloud/contrib/build
           cd ${{ runner.temp }}/soloud/contrib/build
-          cmake .. -G "MinGW Makefiles" -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DSOLOUD_BACKEND_SDL2=OFF -DSOLOUD_BACKEND_WASAPI=ON -DSOLOUD_C_API=ON
+          cmake .. -G "MinGW Makefiles" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" -DSOLOUD_BACKEND_SDL2=OFF -DSOLOUD_BACKEND_WASAPI=ON -DSOLOUD_C_API=ON
           cmake --build . --config Release
       - name: Rename library
         run: |
