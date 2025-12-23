@@ -294,7 +294,7 @@ jobs:
           cp -v ./src/Bullet3Common/libBullet3Common.a ${{ github.workspace }}/libBullet3Common_linux_arm64.a
           cp -v ./src/Bullet3OpenCL/libBullet3OpenCL_clew.a ${{ github.workspace }}/libBullet3OpenCL_clew_linux_arm64.a
           cp -v ./src/BulletSoftBody/libBulletSoftBody.a ${{ github.workspace }}/libBulletSoftBody_linux_arm64.a
-          cp -v /src/Bullet3Serialize/Bullet2FileLoader/libBullet2FileLoader.a ${{ github.workspace }}/libBullet2FileLoader_linux_arm64.a
+          cp -v ./src/Bullet3Serialize/Bullet2FileLoader/libBullet2FileLoader.a ${{ github.workspace }}/libBullet2FileLoader_linux_arm64.a
           cp -v ./src/Bullet3Dynamics/libBullet3Dynamics.a ${{ github.workspace }}/libBullet3Dynamics_linux_arm64.a
           cp -v ./src/BulletInverseDynamics/libBulletInverseDynamics.a ${{ github.workspace }}/libBulletInverseDynamics_linux_arm64.a
           cp -v ./src/BulletCollision/libBulletCollision.a ${{ github.workspace }}/libBulletCollision_linux_arm64.a
