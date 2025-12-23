@@ -119,5 +119,5 @@ jobs:
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: libsoloud_linux_amd64.a
-          path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_linux_amd64.a
+          name: libsoloud_android.a
+          path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_android.a
