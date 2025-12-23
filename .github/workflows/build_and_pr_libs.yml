@@ -7,6 +7,13 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  # These can be a branch, tag or commit hash
+  VERSION_SOLOUD: RELEASE_20200207
+  VERSION_IOSCMAKETOOLCHAIN: 3.0.2
+  VERSION_BULLET3: 3.25
+
+
 jobs:
 
   build-soloud-linux-arm64:
@@ -25,6 +32,8 @@ jobs:
       - name: Build SoLoud
         run: |
           git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          cd ${{ runner.temp }}/soloud
+          git switch --detach ${{ env.VERSION_SOLOUD }}
           mkdir -p ${{ runner.temp }}/soloud/contrib/build
           cd ${{ runner.temp }}/soloud/contrib/build
           cmake ../ -G "Unix Makefiles" \
@@ -57,6 +66,8 @@ jobs:
       - name: Build SoLoud
         run: |
           git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          cd ${{ runner.temp }}/soloud
+          git switch --detach ${{ env.VERSION_SOLOUD }}
           mkdir -p ${{ runner.temp }}/soloud/contrib/build
           cd ${{ runner.temp }}/soloud/contrib/build
           cmake ../ -G "Unix Makefiles" \
@@ -86,6 +97,8 @@ jobs:
       - name: Build SoLoud
         run: |
           git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          cd ${{ runner.temp }}/soloud
+          git switch --detach ${{ env.VERSION_SOLOUD }}
           mkdir -p ${{ runner.temp }}/soloud/contrib/build
           cd ${{ runner.temp }}/soloud/contrib/build
           cmake .. -G "MinGW Makefiles" `
@@ -110,6 +123,8 @@ jobs:
       - name: Build SoLoud
         run: |
           git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          cd ${{ runner.temp }}/soloud
+          git switch --detach ${{ env.VERSION_SOLOUD }}
           mkdir -p ${{ runner.temp }}/soloud/contrib/build
           cd ${{ runner.temp }}/soloud/contrib/build
           cmake ../ -G Xcode \
@@ -134,7 +149,11 @@ jobs:
       - name: Build SoLoud
         run: |
           git clone https://github.com/OlivierLDff/IosCMakeToolchain.git ${{ runner.temp }}/IosCMakeToolchain
+          cd ${{ runner.temp }}/IosCMakeToolchain
+          git switch --detach ${{ env.VERSION_IOSCMAKETOOLCHAIN }}
           git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          cd ${{ runner.temp }}/soloud
+          git switch --detach ${{ env.VERSION_SOLOUD }}
           mkdir -p ${{ runner.temp }}/soloud/contrib/build
           cd ${{ runner.temp }}/soloud/contrib/build
           cmake .. -G Xcode \
@@ -203,6 +222,8 @@ jobs:
       - name: Build SoLoud
         run: |
           git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          cd ${{ runner.temp }}/soloud
+          git switch --detach ${{ env.VERSION_SOLOUD }}
           mkdir -p ${{ runner.temp }}/soloud/contrib/build
           cd ${{ runner.temp }}/soloud/contrib/build
           cmake .. -G "Unix Makefiles" \
@@ -271,6 +292,8 @@ jobs:
       - name: Build Bullet3
         run: |
           git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
+          cd ${{ runner.temp }}/bullet3
+          git switch --detach ${{ env.VERSION_BULLET3 }}
           mkdir -p ${{ runner.temp }}/bullet3/build_mingw_static
           cd ${{ runner.temp }}/bullet3/build_mingw_static
           cmake ../ \
@@ -320,6 +343,8 @@ jobs:
       - name: Build Bullet3
         run: |
           git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
+          cd ${{ runner.temp }}/bullet3
+          git switch --detach ${{ env.VERSION_BULLET3 }}
           mkdir -p ${{ runner.temp }}/bullet3/build_mingw_static
           cd ${{ runner.temp }}/bullet3/build_mingw_static
           cmake ../ \
