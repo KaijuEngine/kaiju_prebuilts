@@ -24,7 +24,7 @@ jobs:
             libasound2-dev
       - name: Build SoLoud
         run: |
-          git clone https://github.com/jarikomppa/soloud.git /src/soloud ${{ runner.temp }}/soloud && \
+          git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud && \
           mkdir -p ${{ runner.temp }}/soloud/contrib/build && \
           cd ${{ runner.temp }}/soloud/contrib/build && \
           cmake ../ -G "Unix Makefiles" -DSOLOUD_BACKEND_SDL2=OFF -DSOLOUD_BACKEND_ALSA=ON -DSOLOUD_C_API=ON && \
