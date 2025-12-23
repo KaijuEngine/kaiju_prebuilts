@@ -66,3 +66,29 @@ jobs:
         with:
           name: libsoloud_linux_amd64.a
           path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_linux_amd64.a
+
+  build-soloud-windows-amd64:
+    name: Build SoLoud (windows/amd64)
+    runs-on: windows-2025
+    steps:
+      - name: Install Build Dependencies (packages)
+        shell: pwsh
+        run: |
+          choco install -y --no-progress `
+            cmake `
+            git
+      - name: Build SoLoud
+        run: |
+          git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud && \
+          mkdir -p ${{ runner.temp }}/soloud/contrib/build && \
+          cd ${{ runner.temp }}/soloud/contrib/build && \
+          cmake .. -G "MinGW Makefiles" .. -DSOLOUD_BACKEND_SDL2=OFF -DSOLOUD_BACKEND_WASAPI=ON -DSOLOUD_C_API=ON
+          cmake --build . --config Release
+      - name: Rename library
+        run: |
+          mv -v ${{ runner.temp }}/soloud/contrib/build/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/libsoloud_windows_amd64.a
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: libsoloud_windows_amd64.a
+          path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_windows_amd64.a
