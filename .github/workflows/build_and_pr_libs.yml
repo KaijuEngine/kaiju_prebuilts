@@ -284,7 +284,7 @@ jobs:
             -DUSE_GLUT=OFF \
             -DINSTALL_LIBS=ON
           make -j 2
-          ls -laR
+          find . -type f -iname "libBullet*.a"
 #      - name: Rename library
 #        run: |
 #          mv -v ${{ runner.temp }}/soloud/contrib/build/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/libsoloud_linux_arm64.a
