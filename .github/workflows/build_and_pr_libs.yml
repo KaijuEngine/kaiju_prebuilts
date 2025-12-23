@@ -270,7 +270,7 @@ jobs:
             git
       - name: Build Bullet3
         run: |
-          https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
+          git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
           mkdir -p ${{ runner.temp }}/bullet3/build_mingw_static
           cd ${{ runner.temp }}/bullet3/build_mingw_static
           cmake ../ \
