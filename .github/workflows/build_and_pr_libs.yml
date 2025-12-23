@@ -294,8 +294,8 @@ jobs:
           git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
           cd ${{ runner.temp }}/bullet3
           git switch --detach ${{ env.VERSION_BULLET3 }}
-          mkdir -p ${{ runner.temp }}/bullet3/build_mingw_static
-          cd ${{ runner.temp }}/bullet3/build_mingw_static
+          mkdir -p ${{ runner.temp }}/bullet3/build_static
+          cd ${{ runner.temp }}/bullet3/build_static
           cmake ../ \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_SHARED_LIBS=OFF \
@@ -309,7 +309,7 @@ jobs:
           make -j 2
           find . -type f -iname "libBullet*.a"
       - name: Rename library files
-        working-directory: ${{ runner.temp }}/bullet3/build_mingw_static
+        working-directory: ${{ runner.temp }}/bullet3/build_static
         run: |
           cp -v ./src/Bullet3Geometry/libBullet3Geometry.a ${{ github.workspace }}/libBullet3Geometry_linux_arm64.a
           cp -v ./src/BulletDynamics/libBulletDynamics.a ${{ github.workspace }}/libBulletDynamics_linux_arm64.a
@@ -345,8 +345,8 @@ jobs:
           git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
           cd ${{ runner.temp }}/bullet3
           git switch --detach ${{ env.VERSION_BULLET3 }}
-          mkdir -p ${{ runner.temp }}/bullet3/build_mingw_static
-          cd ${{ runner.temp }}/bullet3/build_mingw_static
+          mkdir -p ${{ runner.temp }}/bullet3/build_static
+          cd ${{ runner.temp }}/bullet3/build_static
           cmake ../ \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_SHARED_LIBS=OFF \
@@ -360,7 +360,7 @@ jobs:
           make -j 2
           find . -type f -iname "libBullet*.a"
       - name: Rename library files
-        working-directory: ${{ runner.temp }}/bullet3/build_mingw_static
+        working-directory: ${{ runner.temp }}/bullet3/build_static
         run: |
           cp -v ./src/Bullet3Geometry/libBullet3Geometry.a ${{ github.workspace }}/libBullet3Geometry_linux_amd64.a
           cp -v ./src/BulletDynamics/libBulletDynamics.a ${{ github.workspace }}/libBulletDynamics_linux_amd64.a
@@ -377,4 +377,54 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: bullet3_libs_linux_amd64
+          path: ${{ github.workspace }}/*.a
+
+  build-bullet3-windows-amd64:
+    name: Build Bullet3 (windows/amd64)
+    runs-on: windows-2025
+    steps:
+      - name: Install Build Dependencies (packages)
+        shell: pwsh
+        run: |
+          choco install -y --no-progress `
+            cmake `
+            git
+      - name: Build Bullet3
+        run: |
+          git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
+          cd ${{ runner.temp }}/bullet3
+          git switch --detach ${{ env.VERSION_BULLET3 }}
+          mkdir -p ${{ runner.temp }}/bullet3/build_mingw_static
+          cd ${{ runner.temp }}/bullet3/build_mingw_static
+          cmake .. `
+            -G "MinGW Makefiles" `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DBUILD_SHARED_LIBS=OFF `
+            -DBUILD_CPU_DEMOS=OFF `
+            -DBUILD_OPENGL3_DEMOS=OFF `
+            -DBUILD_BULLET2_DEMOS=OFF `
+            -DBUILD_EXTRAS=OFF `
+            -DBUILD_UNIT_TESTS=OFF `
+            -DUSE_GLUT=OFF `
+            -DBULLET2_MULTITHREADING=ON
+          mingw32-make -j 2
+          find . -type f -iname "libBullet*.a"
+      - name: Rename library files
+        working-directory: ${{ runner.temp }}/bullet3/build_mingw_static
+        run: |
+          cp -v ./src/Bullet3Geometry/libBullet3Geometry.a ${{ github.workspace }}/libBullet3Geometry_windows_amd64.a
+          cp -v ./src/BulletDynamics/libBulletDynamics.a ${{ github.workspace }}/libBulletDynamics_windows_amd64.a
+          cp -v ./src/Bullet3Collision/libBullet3Collision.a ${{ github.workspace }}/libBullet3Collision_windows_amd64.a
+          cp -v ./src/Bullet3Common/libBullet3Common.a ${{ github.workspace }}/libBullet3Common_windows_amd64.a
+          cp -v ./src/Bullet3OpenCL/libBullet3OpenCL_clew.a ${{ github.workspace }}/libBullet3OpenCL_clew_windows_amd64.a
+          cp -v ./src/BulletSoftBody/libBulletSoftBody.a ${{ github.workspace }}/libBulletSoftBody_windows_amd64.a
+          cp -v ./src/Bullet3Serialize/Bullet2FileLoader/libBullet2FileLoader.a ${{ github.workspace }}/libBullet2FileLoader_windows_amd64.a
+          cp -v ./src/Bullet3Dynamics/libBullet3Dynamics.a ${{ github.workspace }}/libBullet3Dynamics_windows_amd64.a
+          cp -v ./src/BulletInverseDynamics/libBulletInverseDynamics.a ${{ github.workspace }}/libBulletInverseDynamics_windows_amd64.a
+          cp -v ./src/BulletCollision/libBulletCollision.a ${{ github.workspace }}/libBulletCollision_windows_amd64.a
+          ls -laR ${{ github.workspace }}
+      - name: Upload library
+        uses: actions/upload-artifact@v6
+        with:
+          name: bullet3_libs_windows_amd64
           path: ${{ github.workspace }}/*.a
