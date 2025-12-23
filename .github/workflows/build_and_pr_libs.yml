@@ -10,7 +10,7 @@ permissions:
 jobs:
 
   build-soloud-linux-arm64:
-    name: Build SoLoud (limux/arm64)
+    name: Build SoLoud (linux/arm64)
     runs-on: ubuntu-22.04-arm
     steps:
       - name: Install Build Dependencies (packages)
@@ -42,7 +42,7 @@ jobs:
           path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_linux_arm64.a
 
   build-soloud-linux-amd64:
-    name: Build SoLoud (limux/amd64)
+    name: Build SoLoud (linux/amd64)
     runs-on: ubuntu-22.04
     steps:
       - name: Install Build Dependencies (packages)
@@ -102,75 +102,6 @@ jobs:
         with:
           name: libsoloud_windows_amd64.a
           path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_windows_amd64.a
-
-  build-soloud-android:
-    name: Build SoLoud (android)
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Install Build Dependencies (packages)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            build-essential \
-            ca-certificates \
-            cmake \
-            git \
-            libasound2-dev
-      - name: Build SoLoud
-        run: |
-          git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
-          mkdir -p ${{ runner.temp }}/soloud/contrib/build
-          cd ${{ runner.temp }}/soloud/contrib/build
-          cmake .. -G "Unix Makefiles" \
-            "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake" \
-            -DANDROID_ABI=arm64-v8a \
-            -DANDROID_PLATFORM=android-21 \
-            -DANDROID_STL=c++_static \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DSOLLOUD_STATIC=1 \
-            -DSOLLOUD_BUILD_DEMOS=OFF \
-            -DSOLOUD_BACKEND_OPENSLES=ON \
-            -DSOLOUD_BACKEND_SDL2=OFF \
-            -DSOLOUD_C_API=ON \
-            -DSOLOUD_BACKEND_NULL=OFF \
-            -DSOLOUD_BACKEND_MINIAUDIO=OFF \
-            -DSOLOUD_BACKEND_WAVEOUT=OFF \
-            -DSOLOUD_BACKEND_XAUDIO2=OFF \
-            -DSOLOUD_BACKEND_WINMM=OFF \
-            -DSOLOUD_BACKEND_WASAPI=OFF \
-            -DSOLOUD_BACKEND_ALSA=OFF \
-            -DSOLOUD_BACKEND_COREAUDIO=OFF \
-            -DSOLOUD_BACKEND_OPENAL=OFF \
-            -DSOLOUD_WAV=ON \
-            -DSOLOUD_OGG=ON \
-            -DSOLOUD_MP3=ON \
-            -DSOLOUD_FLAC=OFF \
-            -DSOLOUD_OPUS=OFF \
-            -DSOLOUD_SPEECH=OFF \
-            -DSOLOUD_SFXR=OFF \
-            -DSOLOUD_AY=OFF \
-            -DSOLOUD_SID=OFF \
-            -DSOLOUD_VIC=OFF \
-            -DSOLOUD_TEDSID=OFF \
-            -DSOLOUD_MONOTONE=OFF \
-            -DSOLOUD_VIC=OFF \
-            -DSOLOUD_BASSBOOST=OFF \
-            -DSOLOUD_BIQUAD=OFF \
-            -DSOLOUD_DCREMOVAL=OFF \
-            -DSOLOUD_ECHO=OFF \
-            -DSOLOUD_FFT=OFF \
-            -DSOLOUD_FREEVERB=OFF \
-            -DSOLOUD_LOFI=OFF \
-            -DSOLOUD_WAVESHAPER=OFF
-          cmake --build . --config Release
-      - name: Rename library
-        run: |
-          mv -v ${{ runner.temp }}/soloud/contrib/build/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/libsoloud_android.a
-      - name: Upload binary
-        uses: actions/upload-artifact@v4
-        with:
-          name: libsoloud_android.a
-          path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_android.a
 
   build-soloud-darwin-arm64:
     name: Build SoLoud (darwin/arm64)
@@ -255,3 +186,72 @@ jobs:
         with:
           name: libsoloud_ios.a
           path: ${{ runner.temp }}/soloud/contrib/build/Release-iphoneos/libsoloud_ios.a
+
+  build-soloud-android:
+    name: Build SoLoud (android)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install Build Dependencies (packages)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            ca-certificates \
+            cmake \
+            git \
+            libasound2-dev
+      - name: Build SoLoud
+        run: |
+          git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          mkdir -p ${{ runner.temp }}/soloud/contrib/build
+          cd ${{ runner.temp }}/soloud/contrib/build
+          cmake .. -G "Unix Makefiles" \
+            "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake" \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-21 \
+            -DANDROID_STL=c++_static \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DSOLLOUD_STATIC=1 \
+            -DSOLLOUD_BUILD_DEMOS=OFF \
+            -DSOLOUD_BACKEND_OPENSLES=ON \
+            -DSOLOUD_BACKEND_SDL2=OFF \
+            -DSOLOUD_C_API=ON \
+            -DSOLOUD_BACKEND_NULL=OFF \
+            -DSOLOUD_BACKEND_MINIAUDIO=OFF \
+            -DSOLOUD_BACKEND_WAVEOUT=OFF \
+            -DSOLOUD_BACKEND_XAUDIO2=OFF \
+            -DSOLOUD_BACKEND_WINMM=OFF \
+            -DSOLOUD_BACKEND_WASAPI=OFF \
+            -DSOLOUD_BACKEND_ALSA=OFF \
+            -DSOLOUD_BACKEND_COREAUDIO=OFF \
+            -DSOLOUD_BACKEND_OPENAL=OFF \
+            -DSOLOUD_WAV=ON \
+            -DSOLOUD_OGG=ON \
+            -DSOLOUD_MP3=ON \
+            -DSOLOUD_FLAC=OFF \
+            -DSOLOUD_OPUS=OFF \
+            -DSOLOUD_SPEECH=OFF \
+            -DSOLOUD_SFXR=OFF \
+            -DSOLOUD_AY=OFF \
+            -DSOLOUD_SID=OFF \
+            -DSOLOUD_VIC=OFF \
+            -DSOLOUD_TEDSID=OFF \
+            -DSOLOUD_MONOTONE=OFF \
+            -DSOLOUD_VIC=OFF \
+            -DSOLOUD_BASSBOOST=OFF \
+            -DSOLOUD_BIQUAD=OFF \
+            -DSOLOUD_DCREMOVAL=OFF \
+            -DSOLOUD_ECHO=OFF \
+            -DSOLOUD_FFT=OFF \
+            -DSOLOUD_FREEVERB=OFF \
+            -DSOLOUD_LOFI=OFF \
+            -DSOLOUD_WAVESHAPER=OFF
+          cmake --build . --config Release
+      - name: Rename library
+        run: |
+          mv -v ${{ runner.temp }}/soloud/contrib/build/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/libsoloud_android.a
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: libsoloud_android.a
+          path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_android.a
