@@ -398,6 +398,7 @@ jobs:
           cd ${{ runner.temp }}/bullet3/build_mingw_static
           cmake .. `
             -G "MinGW Makefiles" `
+            "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" `
             -DCMAKE_BUILD_TYPE=Release `
             -DBUILD_SHARED_LIBS=OFF `
             -DBUILD_CPU_DEMOS=OFF `
