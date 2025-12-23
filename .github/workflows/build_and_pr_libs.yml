@@ -206,7 +206,7 @@ jobs:
           git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
           mkdir -p ${{ runner.temp }}/soloud/contrib/build
           cd ${{ runner.temp }}/soloud/contrib/build
-          cmake .. -G "Unix Makefiles" \
+          cmake .. -G Xcode \
             "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" \
             "-DCMAKE_TOOLCHAIN_FILE=${{ runner.temp }}/IosCMakeToolchain/ios.toolchain.cmake" \
             -DPLATFORM=OS64COMBINED \
