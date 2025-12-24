@@ -2,7 +2,6 @@ name: Build and PR Libraries
 
 on:
   workflow_dispatch:
-  push:
 
 permissions:
   contents: write
