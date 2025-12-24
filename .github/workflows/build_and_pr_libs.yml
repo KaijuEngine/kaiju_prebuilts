@@ -1,0 +1,658 @@
+name: Build and PR Libraries
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  # These can be a branch, tag or commit hash
+  VERSION_SOLOUD: RELEASE_20200207
+  VERSION_IOSCMAKETOOLCHAIN: 3.0.2
+  VERSION_BULLET3: 3.25
+
+
+jobs:
+
+  build-soloud-linux-arm64:
+    name: Build SoLoud (linux/arm64)
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - name: Install Build Dependencies (packages)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            ca-certificates \
+            cmake \
+            git \
+            libasound2-dev
+      - name: Build SoLoud
+        run: |
+          git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          cd ${{ runner.temp }}/soloud
+          git switch --detach ${{ env.VERSION_SOLOUD }}
+          mkdir -p ${{ runner.temp }}/soloud/contrib/build
+          cd ${{ runner.temp }}/soloud/contrib/build
+          cmake ../ -G "Unix Makefiles" \
+            -DSOLOUD_BACKEND_SDL2=OFF \
+            -DSOLOUD_BACKEND_ALSA=ON \
+            -DSOLOUD_C_API=ON
+          cmake --build . --config Release
+      - name: Rename library files
+        run: |
+          mv -v ${{ runner.temp }}/soloud/contrib/build/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/libsoloud_linux_arm64.a
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: libsoloud_linux_arm64.a
+          path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_linux_arm64.a
+
+  build-soloud-linux-amd64:
+    name: Build SoLoud (linux/amd64)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install Build Dependencies (packages)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            ca-certificates \
+            cmake \
+            git \
+            libasound2-dev
+      - name: Build SoLoud
+        run: |
+          git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          cd ${{ runner.temp }}/soloud
+          git switch --detach ${{ env.VERSION_SOLOUD }}
+          mkdir -p ${{ runner.temp }}/soloud/contrib/build
+          cd ${{ runner.temp }}/soloud/contrib/build
+          cmake ../ -G "Unix Makefiles" \
+            -DSOLOUD_BACKEND_SDL2=OFF \
+            -DSOLOUD_BACKEND_ALSA=ON \
+            -DSOLOUD_C_API=ON
+          cmake --build . --config Release
+      - name: Rename library files
+        run: |
+          mv -v ${{ runner.temp }}/soloud/contrib/build/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/libsoloud_linux_amd64.a
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: libsoloud_linux_amd64.a
+          path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_linux_amd64.a
+
+  build-soloud-windows-amd64:
+    name: Build SoLoud (windows/amd64)
+    runs-on: windows-2025
+    steps:
+      - name: Install Build Dependencies (packages)
+        shell: pwsh
+        run: |
+          choco install -y --no-progress `
+            cmake `
+            git
+      - name: Build SoLoud
+        run: |
+          git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          cd ${{ runner.temp }}/soloud
+          git switch --detach ${{ env.VERSION_SOLOUD }}
+          mkdir -p ${{ runner.temp }}/soloud/contrib/build
+          cd ${{ runner.temp }}/soloud/contrib/build
+          cmake .. -G "MinGW Makefiles" `
+            "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" `
+            -DSOLOUD_BACKEND_SDL2=OFF `
+            -DSOLOUD_BACKEND_WASAPI=ON `
+            -DSOLOUD_C_API=ON
+          cmake --build . --config Release
+      - name: Rename library files
+        run: |
+          mv -v ${{ runner.temp }}/soloud/contrib/build/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/libsoloud_windows_amd64.a
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: libsoloud_windows_amd64.a
+          path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_windows_amd64.a
+
+  build-soloud-darwin-arm64:
+    name: Build SoLoud (darwin/arm64)
+    runs-on: macos-15
+    steps:
+      - name: Build SoLoud
+        run: |
+          git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          cd ${{ runner.temp }}/soloud
+          git switch --detach ${{ env.VERSION_SOLOUD }}
+          mkdir -p ${{ runner.temp }}/soloud/contrib/build
+          cd ${{ runner.temp }}/soloud/contrib/build
+          cmake ../ -G Xcode \
+            "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" \
+            -DSOLOUD_BACKEND_SDL2=OFF \
+            -DSOLOUD_BACKEND_COREAUDIO=ON \
+            -DSOLOUD_C_API=ON
+          cmake --build . --config Release
+      - name: Rename library files
+        run: |
+          mv -v ${{ runner.temp }}/soloud/contrib/build/Release/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/Release/libsoloud_darwin_arm64.a
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: libsoloud_darwin_arm64.a
+          path: ${{ runner.temp }}/soloud/contrib/build/Release/libsoloud_darwin_arm64.a
+
+  build-soloud-ios:
+    name: Build SoLoud (ios)
+    runs-on: macos-15
+    steps:
+      - name: Build SoLoud
+        run: |
+          git clone https://github.com/OlivierLDff/IosCMakeToolchain.git ${{ runner.temp }}/IosCMakeToolchain
+          cd ${{ runner.temp }}/IosCMakeToolchain
+          git switch --detach ${{ env.VERSION_IOSCMAKETOOLCHAIN }}
+          git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          cd ${{ runner.temp }}/soloud
+          git switch --detach ${{ env.VERSION_SOLOUD }}
+          mkdir -p ${{ runner.temp }}/soloud/contrib/build
+          cd ${{ runner.temp }}/soloud/contrib/build
+          cmake .. -G Xcode \
+            "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" \
+            "-DCMAKE_TOOLCHAIN_FILE=${{ runner.temp }}/IosCMakeToolchain/ios.toolchain.cmake" \
+            -DPLATFORM=OS64COMBINED \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DSOLLOUD_STATIC=1 \
+            -DSOLLOUD_BUILD_DEMOS=OFF \
+            -DSOLOUD_BACKEND_OPENSLES=OFF \
+            -DSOLOUD_BACKEND_SDL2=OFF \
+            -DSOLOUD_C_API=ON \
+            -DSOLOUD_BACKEND_NULL=OFF \
+            -DSOLOUD_BACKEND_MINIAUDIO=OFF \
+            -DSOLOUD_BACKEND_WAVEOUT=OFF \
+            -DSOLOUD_BACKEND_XAUDIO2=OFF \
+            -DSOLOUD_BACKEND_WINMM=OFF \
+            -DSOLOUD_BACKEND_WASAPI=OFF \
+            -DSOLOUD_BACKEND_ALSA=OFF \
+            -DSOLOUD_BACKEND_COREAUDIO=ON \
+            -DSOLOUD_BACKEND_OPENAL=OFF \
+            -DSOLOUD_WAV=ON \
+            -DSOLOUD_OGG=ON \
+            -DSOLOUD_MP3=ON \
+            -DSOLOUD_FLAC=OFF \
+            -DSOLOUD_OPUS=OFF \
+            -DSOLOUD_SPEECH=OFF \
+            -DSOLOUD_SFXR=OFF \
+            -DSOLOUD_AY=OFF \
+            -DSOLOUD_SID=OFF \
+            -DSOLOUD_VIC=OFF \
+            -DSOLOUD_TEDSID=OFF \
+            -DSOLOUD_MONOTONE=OFF \
+            -DSOLOUD_VIC=OFF \
+            -DSOLOUD_BASSBOOST=OFF \
+            -DSOLOUD_BIQUAD=OFF \
+            -DSOLOUD_DCREMOVAL=OFF \
+            -DSOLOUD_ECHO=OFF \
+            -DSOLOUD_FFT=OFF \
+            -DSOLOUD_FREEVERB=OFF \
+            -DSOLOUD_LOFI=OFF \
+            -DSOLOUD_WAVESHAPER=OFF
+          cmake --build . --config Release
+      - name: Rename library files
+        run: |
+          mv -v ${{ runner.temp }}/soloud/contrib/build/Release-iphoneos/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/Release-iphoneos/libsoloud_ios.a
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: libsoloud_ios.a
+          path: ${{ runner.temp }}/soloud/contrib/build/Release-iphoneos/libsoloud_ios.a
+
+  build-soloud-android:
+    name: Build SoLoud (android)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install Build Dependencies (packages)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            ca-certificates \
+            cmake \
+            git \
+            libasound2-dev
+      - name: Build SoLoud
+        run: |
+          git clone https://github.com/jarikomppa/soloud.git ${{ runner.temp }}/soloud
+          cd ${{ runner.temp }}/soloud
+          git switch --detach ${{ env.VERSION_SOLOUD }}
+          mkdir -p ${{ runner.temp }}/soloud/contrib/build
+          cd ${{ runner.temp }}/soloud/contrib/build
+          cmake .. -G "Unix Makefiles" \
+            "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake" \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-21 \
+            -DANDROID_STL=c++_static \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DSOLLOUD_STATIC=1 \
+            -DSOLLOUD_BUILD_DEMOS=OFF \
+            -DSOLOUD_BACKEND_OPENSLES=ON \
+            -DSOLOUD_BACKEND_SDL2=OFF \
+            -DSOLOUD_C_API=ON \
+            -DSOLOUD_BACKEND_NULL=OFF \
+            -DSOLOUD_BACKEND_MINIAUDIO=OFF \
+            -DSOLOUD_BACKEND_WAVEOUT=OFF \
+            -DSOLOUD_BACKEND_XAUDIO2=OFF \
+            -DSOLOUD_BACKEND_WINMM=OFF \
+            -DSOLOUD_BACKEND_WASAPI=OFF \
+            -DSOLOUD_BACKEND_ALSA=OFF \
+            -DSOLOUD_BACKEND_COREAUDIO=OFF \
+            -DSOLOUD_BACKEND_OPENAL=OFF \
+            -DSOLOUD_WAV=ON \
+            -DSOLOUD_OGG=ON \
+            -DSOLOUD_MP3=ON \
+            -DSOLOUD_FLAC=OFF \
+            -DSOLOUD_OPUS=OFF \
+            -DSOLOUD_SPEECH=OFF \
+            -DSOLOUD_SFXR=OFF \
+            -DSOLOUD_AY=OFF \
+            -DSOLOUD_SID=OFF \
+            -DSOLOUD_VIC=OFF \
+            -DSOLOUD_TEDSID=OFF \
+            -DSOLOUD_MONOTONE=OFF \
+            -DSOLOUD_VIC=OFF \
+            -DSOLOUD_BASSBOOST=OFF \
+            -DSOLOUD_BIQUAD=OFF \
+            -DSOLOUD_DCREMOVAL=OFF \
+            -DSOLOUD_ECHO=OFF \
+            -DSOLOUD_FFT=OFF \
+            -DSOLOUD_FREEVERB=OFF \
+            -DSOLOUD_LOFI=OFF \
+            -DSOLOUD_WAVESHAPER=OFF
+          cmake --build . --config Release
+      - name: Rename library files
+        run: |
+          mv -v ${{ runner.temp }}/soloud/contrib/build/libsoloud.a ${{ runner.temp }}/soloud/contrib/build/libsoloud_android.a
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: libsoloud_android.a
+          path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_android.a
+
+  build-bullet3-linux-arm64:
+    name: Build Bullet3 (linux/arm64)
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - name: Install Build Dependencies (packages)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            ca-certificates \
+            cmake \
+            git
+      - name: Build Bullet3
+        run: |
+          git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
+          cd ${{ runner.temp }}/bullet3
+          git switch --detach ${{ env.VERSION_BULLET3 }}
+          mkdir -p ${{ runner.temp }}/bullet3/build_static
+          cd ${{ runner.temp }}/bullet3/build_static
+          cmake ../ \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DBUILD_CPU_DEMOS=OFF \
+            -DBUILD_OPENGL3_DEMOS=OFF \
+            -DBUILD_BULLET2_DEMOS=OFF \
+            -DBUILD_EXTRAS=OFF \
+            -DBUILD_UNIT_TESTS=OFF \
+            -DUSE_GLUT=OFF \
+            -DINSTALL_LIBS=ON
+          make -j 2
+          find . -type f -iname "lib*.a" -exec cp -v {} ${{ github.workspace }}/ \;
+      - name: Rename library files
+        run: |
+          mv -v libBullet3Geometry.a libBullet3Geometry_linux_arm64.a
+          mv -v libBulletDynamics.a libBulletDynamics_linux_arm64.a
+          mv -v libBullet3Collision.a libBullet3Collision_linux_arm64.a
+          mv -v libBullet3Common.a libBullet3Common_linux_arm64.a
+          mv -v libBullet3OpenCL_clew.a libBullet3OpenCL_clew_linux_arm64.a
+          mv -v libBulletSoftBody.a libBulletSoftBody_linux_arm64.a
+          mv -v libBullet2FileLoader.a libBullet2FileLoader_linux_arm64.a
+          mv -v libBullet3Dynamics.a libBullet3Dynamics_linux_arm64.a
+          mv -v libBulletInverseDynamics.a libBulletInverseDynamics_linux_arm64.a
+          mv -v libBulletCollision.a libBulletCollision_linux_arm64.a
+          mv -v libLinearMath.a libLinearMath_linux_arm64.a
+          ls -laR ${{ github.workspace }}
+      - name: Upload library
+        uses: actions/upload-artifact@v6
+        with:
+          name: bullet3_libs_linux_arm64
+          path: ${{ github.workspace }}/*.a
+
+  build-bullet3-linux-amd64:
+    name: Build Bullet3 (linux/amd64)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install Build Dependencies (packages)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            ca-certificates \
+            cmake \
+            git
+      - name: Build Bullet3
+        run: |
+          git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
+          cd ${{ runner.temp }}/bullet3
+          git switch --detach ${{ env.VERSION_BULLET3 }}
+          mkdir -p ${{ runner.temp }}/bullet3/build_static
+          cd ${{ runner.temp }}/bullet3/build_static
+          cmake ../ \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DBUILD_CPU_DEMOS=OFF \
+            -DBUILD_OPENGL3_DEMOS=OFF \
+            -DBUILD_BULLET2_DEMOS=OFF \
+            -DBUILD_EXTRAS=OFF \
+            -DBUILD_UNIT_TESTS=OFF \
+            -DUSE_GLUT=OFF \
+            -DINSTALL_LIBS=ON
+          make -j 2
+          find . -type f -iname "lib*.a" -exec cp -v {} ${{ github.workspace }}/ \;
+      - name: Rename library files
+        run: |
+          mv -v libBullet3Geometry.a libBullet3Geometry_linux_amd64.a
+          mv -v libBulletDynamics.a libBulletDynamics_linux_amd64.a
+          mv -v libBullet3Collision.a libBullet3Collision_linux_amd64.a
+          mv -v libBullet3Common.a libBullet3Common_linux_amd64.a
+          mv -v libBullet3OpenCL_clew.a libBullet3OpenCL_clew_linux_amd64.a
+          mv -v libBulletSoftBody.a libBulletSoftBody_linux_amd64.a
+          mv -v libBullet2FileLoader.a libBullet2FileLoader_linux_amd64.a
+          mv -v libBullet3Dynamics.a libBullet3Dynamics_linux_amd64.a
+          mv -v libBulletInverseDynamics.a libBulletInverseDynamics_linux_amd64.a
+          mv -v libBulletCollision.a libBulletCollision_linux_amd64.a
+          mv -v libLinearMath.a libLinearMath_linux_amd64.a
+          ls -laR ${{ github.workspace }}
+      - name: Upload library
+        uses: actions/upload-artifact@v6
+        with:
+          name: bullet3_libs_linux_amd64
+          path: ${{ github.workspace }}/*.a
+
+  build-bullet3-windows-amd64:
+    name: Build Bullet3 (windows/amd64)
+    runs-on: windows-2025
+    steps:
+      - name: Install Build Dependencies (packages)
+        shell: pwsh
+        run: |
+          choco install -y --no-progress `
+            cmake `
+            git
+      - name: Build Bullet3
+        run: |
+          git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
+          cd ${{ runner.temp }}/bullet3
+          git switch --detach ${{ env.VERSION_BULLET3 }}
+          mkdir -p ${{ runner.temp }}/bullet3/build_mingw_static
+          cd ${{ runner.temp }}/bullet3/build_mingw_static
+          cmake .. `
+            -G "MinGW Makefiles" `
+            "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DBUILD_SHARED_LIBS=OFF `
+            -DBUILD_CPU_DEMOS=OFF `
+            -DBUILD_OPENGL3_DEMOS=OFF `
+            -DBUILD_BULLET2_DEMOS=OFF `
+            -DBUILD_EXTRAS=OFF `
+            -DBUILD_UNIT_TESTS=OFF `
+            -DUSE_GLUT=OFF `
+            -DBULLET2_MULTITHREADING=ON
+          mingw32-make -j 2
+          cp -v ${{ runner.temp }}/bullet3/build_mingw_static/lib/lib*.a ${{ github.workspace }}/
+      - name: Rename library files
+        run: |
+          mv -v libBullet3Geometry.a libBullet3Geometry_windows_amd64.a
+          mv -v libBulletDynamics.a libBulletDynamics_windows_amd64.a
+          mv -v libBullet3Collision.a libBullet3Collision_windows_amd64.a
+          mv -v libBullet3Common.a libBullet3Common_windows_amd64.a
+          mv -v libBullet3OpenCL_clew.a libBullet3OpenCL_clew_windows_amd64.a
+          mv -v libBulletSoftBody.a libBulletSoftBody_windows_amd64.a
+          mv -v libBullet2FileLoader.a libBullet2FileLoader_windows_amd64.a
+          mv -v libBullet3Dynamics.a libBullet3Dynamics_windows_amd64.a
+          mv -v libBulletInverseDynamics.a libBulletInverseDynamics_windows_amd64.a
+          mv -v libBulletCollision.a libBulletCollision_windows_amd64.a
+          mv -v libLinearMath.a libLinearMath_windows_amd64.a
+          Get-ChildItem
+      - name: Upload library
+        uses: actions/upload-artifact@v6
+        with:
+          name: bullet3_libs_windows_amd64
+          path: ${{ github.workspace }}/*.a
+
+  build-bullet3-darwin-arm64:
+    name: Build Bullet3 (darwin/arm64)
+    runs-on: macos-15
+    steps:
+      - name: Build Bullet3
+        run: |
+          git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
+          cd ${{ runner.temp }}/bullet3
+          git switch --detach ${{ env.VERSION_BULLET3 }}
+          mkdir -p ${{ runner.temp }}/bullet3/build_static
+          cd ${{ runner.temp }}/bullet3/build_static
+          cmake .. -G Xcode \
+            "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DBUILD_CPU_DEMOS=OFF \
+            -DBUILD_OPENGL3_DEMOS=OFF \
+            -DBUILD_BULLET2_DEMOS=OFF \
+            -DBUILD_EXTRAS=OFF \
+            -DBUILD_UNIT_TESTS=OFF \
+            -DUSE_GLUT=OFF \
+            -DINSTALL_LIBS=ON
+          cmake --build . --config Release
+          find . -type f -iname "lib*.a" -exec cp -v {} ${{ github.workspace }}/ \;
+      - name: Rename library files
+        run: |
+          mv -v libBullet3Geometry.a libBullet3Geometry_darwin_arm64.a
+          mv -v libBulletDynamics.a libBulletDynamics_darwin_arm64.a
+          mv -v libBullet3Collision.a libBullet3Collision_darwin_arm64.a
+          mv -v libBullet3Common.a libBullet3Common_darwin_arm64.a
+          mv -v libBullet3OpenCL_clew.a libBullet3OpenCL_clew_darwin_arm64.a
+          mv -v libBulletSoftBody.a libBulletSoftBody_darwin_arm64.a
+          mv -v libBullet2FileLoader.a libBullet2FileLoader_darwin_arm64.a
+          mv -v libBullet3Dynamics.a libBullet3Dynamics_darwin_arm64.a
+          mv -v libBulletInverseDynamics.a libBulletInverseDynamics_darwin_arm64.a
+          mv -v libBulletCollision.a libBulletCollision_darwin_arm64.a
+          mv -v libLinearMath.a libLinearMath_darwin_arm64.a
+          ls -laR ${{ github.workspace }}
+      - name: Upload library
+        uses: actions/upload-artifact@v6
+        with:
+          name: bullet3_libs_darwin_arm64
+          path: ${{ github.workspace }}/*.a
+
+  build-bullet3-ios:
+    name: Build Bullet3 (ios)
+    runs-on: macos-15
+    steps:
+      - name: Build Bullet3
+        run: |
+          git clone https://github.com/OlivierLDff/IosCMakeToolchain.git ${{ runner.temp }}/IosCMakeToolchain
+          cd ${{ runner.temp }}/IosCMakeToolchain
+          git switch --detach ${{ env.VERSION_IOSCMAKETOOLCHAIN }}
+          git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
+          cd ${{ runner.temp }}/bullet3
+          git switch --detach ${{ env.VERSION_BULLET3 }}
+          mkdir -p ${{ runner.temp }}/bullet3/build_static
+          cd ${{ runner.temp }}/bullet3/build_static
+          cmake .. -G Xcode \
+            "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" \
+            "-DCMAKE_TOOLCHAIN_FILE=${{ runner.temp }}/IosCMakeToolchain/ios.toolchain.cmake" \
+            -DPLATFORM=OS64COMBINED \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DBUILD_CPU_DEMOS=OFF \
+            -DBUILD_OPENGL3_DEMOS=OFF \
+            -DBUILD_BULLET2_DEMOS=OFF \
+            -DBUILD_EXTRAS=OFF \
+            -DBUILD_UNIT_TESTS=OFF \
+            -DUSE_GLUT=OFF \
+            -DINSTALL_LIBS=ON
+          cmake --build . --config Release
+          find . -type f -iname "lib*.a" -exec cp -v {} ${{ github.workspace }}/ \;
+      - name: Rename library files
+        run: |
+          mv -v libBullet3Geometry.a libBullet3Geometry_ios.a
+          mv -v libBulletDynamics.a libBulletDynamics_ios.a
+          mv -v libBullet3Collision.a libBullet3Collision_ios.a
+          mv -v libBullet3Common.a libBullet3Common_ios.a
+          mv -v libBullet3OpenCL_clew.a libBullet3OpenCL_clew_ios.a
+          mv -v libBulletSoftBody.a libBulletSoftBody_ios.a
+          mv -v libBullet2FileLoader.a libBullet2FileLoader_ios.a
+          mv -v libBullet3Dynamics.a libBullet3Dynamics_ios.a
+          mv -v libBulletInverseDynamics.a libBulletInverseDynamics_ios.a
+          mv -v libBulletCollision.a libBulletCollision_ios.a
+          mv -v libLinearMath.a libLinearMath_ios.a
+          ls -laR ${{ github.workspace }}
+      - name: Upload library
+        uses: actions/upload-artifact@v6
+        with:
+          name: bullet3_libs_ios
+          path: ${{ github.workspace }}/*.a
+
+  build-bullet3-android:
+    name: Build Bullet3 (android)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install Build Dependencies (packages)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            ca-certificates \
+            cmake \
+            git
+      - name: Build Bullet3
+        run: |
+          git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
+          cd ${{ runner.temp }}/bullet3
+          git switch --detach ${{ env.VERSION_BULLET3 }}
+          mkdir -p ${{ runner.temp }}/bullet3/build_static
+          cd ${{ runner.temp }}/bullet3/build_static
+          cmake ../ \
+            "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake" \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-21 \
+            -DANDROID_STL=c++_static \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DBUILD_CPU_DEMOS=OFF \
+            -DBUILD_OPENGL3_DEMOS=OFF \
+            -DBUILD_BULLET2_DEMOS=OFF \
+            -DBUILD_EXTRAS=OFF \
+            -DBUILD_UNIT_TESTS=OFF \
+            -DUSE_GLUT=OFF \
+            -DINSTALL_LIBS=ON
+          make -j 2
+          find . -type f -iname "lib*.a" -exec cp -v {} ${{ github.workspace }}/ \;
+      - name: Rename library files
+        run: |
+          mv -v libBullet3Geometry.a libBullet3Geometry_android.a
+          mv -v libBulletDynamics.a libBulletDynamics_android.a
+          mv -v libBullet3Collision.a libBullet3Collision_android.a
+          mv -v libBullet3Common.a libBullet3Common_android.a
+          mv -v libBullet3OpenCL_clew.a libBullet3OpenCL_clew_android.a
+          mv -v libBulletSoftBody.a libBulletSoftBody_android.a
+          mv -v libBullet2FileLoader.a libBullet2FileLoader_android.a
+          mv -v libBullet3Dynamics.a libBullet3Dynamics_android.a
+          mv -v libBulletInverseDynamics.a libBulletInverseDynamics_android.a
+          mv -v libBulletCollision.a libBulletCollision_android.a
+          mv -v libLinearMath.a libLinearMath_android.a
+          ls -laR ${{ github.workspace }}
+      - name: Upload library
+        uses: actions/upload-artifact@v6
+        with:
+          name: bullet3_libs_android
+          path: ${{ github.workspace }}/*.a
+
+  pr-binaries:
+    name: Create Pull Request
+    needs:
+      - build-soloud-linux-arm64
+      - build-soloud-linux-amd64
+      - build-soloud-windows-amd64
+      - build-soloud-darwin-arm64
+      - build-soloud-ios
+      - build-soloud-android
+      - build-bullet3-linux-arm64
+      - build-bullet3-linux-amd64
+      - build-bullet3-windows-amd64
+      - build-bullet3-darwin-arm64
+      - build-bullet3-ios
+      - build-bullet3-android
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: "Copy in library: libsoloud_linux_arm64.a"
+        uses: actions/download-artifact@v7
+        with:
+          name: libsoloud_linux_arm64.a
+      - name: "Copy in library: libsoloud_linux_amd64.a"
+        uses: actions/download-artifact@v7
+        with:
+          name: libsoloud_linux_amd64.a
+      - name: "Copy in library: libsoloud_windows_amd64.a"
+        uses: actions/download-artifact@v7
+        with:
+          name: libsoloud_windows_amd64.a
+      - name: "Copy in library: libsoloud_darwin_arm64.a"
+        uses: actions/download-artifact@v7
+        with:
+          name: libsoloud_darwin_arm64.a
+      - name: "Copy in library: libsoloud_ios.a"
+        uses: actions/download-artifact@v7
+        with:
+          name: libsoloud_ios.a
+      - name: "Copy in library: libsoloud_android.a"
+        uses: actions/download-artifact@v7
+        with:
+          name: libsoloud_android.a
+      - name: "Copy in library: bullet3_libs_linux_arm64"
+        uses: actions/download-artifact@v7
+        with:
+          name: bullet3_libs_linux_arm64
+      - name: "Copy in library: bullet3_libs_linux_amd64"
+        uses: actions/download-artifact@v7
+        with:
+          name: bullet3_libs_linux_amd64
+      - name: "Copy in library: bullet3_libs_windows_amd64"
+        uses: actions/download-artifact@v7
+        with:
+          name: bullet3_libs_windows_amd64
+      - name: "Copy in library: bullet3_libs_darwin_arm64"
+        uses: actions/download-artifact@v7
+        with:
+          name: bullet3_libs_darwin_arm64
+      - name: "Copy in library: bullet3_libs_ios"
+        uses: actions/download-artifact@v7
+        with:
+          name: bullet3_libs_ios
+      - name: "Copy in library: bullet3_libs_android"
+        uses: actions/download-artifact@v7
+        with:
+          name: bullet3_libs_android
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          title: 'chore: update libraries'
+          commit-message: 'Manually triggered library update'
+          body: |
+            Generated by workflow "${{ github.workflow }}", workflow run ${{ github.run_id }}, triggered by ${{ github.triggering_actor }}.
+
+            Automated changes by [create-pull-request](https://github.com/peter-evans/create-pull-request) GitHub action.
+          branch: 'update-binaries/run_${{ github.run_id }}'
+          delete-branch: 'true'
