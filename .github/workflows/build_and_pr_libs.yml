@@ -277,6 +277,7 @@ jobs:
           name: libsoloud_android.a
           path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_android.a
 
+  # todo: libLinearMath!
   build-bullet3-linux-arm64:
     name: Build Bullet3 (linux/arm64)
     runs-on: ubuntu-22.04-arm
@@ -328,6 +329,7 @@ jobs:
           name: bullet3_libs_linux_arm64
           path: ${{ github.workspace }}/*.a
 
+  # todo: libLinearMath!
   build-bullet3-linux-amd64:
     name: Build Bullet3 (linux/amd64)
     runs-on: ubuntu-22.04
@@ -409,6 +411,7 @@ jobs:
             -DUSE_GLUT=OFF `
             -DBULLET2_MULTITHREADING=ON
           mingw32-make -j 2
+          ls -la ../../lib
           cd ../../
           pwd
           find . -type f -iname "libBullet*.a"
