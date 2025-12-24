@@ -278,7 +278,6 @@ jobs:
           name: libsoloud_android.a
           path: ${{ runner.temp }}/soloud/contrib/build/libsoloud_android.a
 
-  # todo: libLinearMath!
   build-bullet3-linux-arm64:
     name: Build Bullet3 (linux/arm64)
     runs-on: ubuntu-22.04-arm
@@ -323,6 +322,7 @@ jobs:
           cp -v ./src/Bullet3Dynamics/libBullet3Dynamics.a ${{ github.workspace }}/libBullet3Dynamics_linux_arm64.a
           cp -v ./src/BulletInverseDynamics/libBulletInverseDynamics.a ${{ github.workspace }}/libBulletInverseDynamics_linux_arm64.a
           cp -v ./src/BulletCollision/libBulletCollision.a ${{ github.workspace }}/libBulletCollision_linux_arm64.a
+          cp -v ./src/LinearMath/libLinearMath.a ${{ github.workspace }}/libLinearMath_linux_arm64.a
           ls -laR ${{ github.workspace }}
       - name: Upload library
         uses: actions/upload-artifact@v6
@@ -330,7 +330,6 @@ jobs:
           name: bullet3_libs_linux_arm64
           path: ${{ github.workspace }}/*.a
 
-  # todo: libLinearMath!
   build-bullet3-linux-amd64:
     name: Build Bullet3 (linux/amd64)
     runs-on: ubuntu-22.04
@@ -375,6 +374,7 @@ jobs:
           cp -v ./src/Bullet3Dynamics/libBullet3Dynamics.a ${{ github.workspace }}/libBullet3Dynamics_linux_amd64.a
           cp -v ./src/BulletInverseDynamics/libBulletInverseDynamics.a ${{ github.workspace }}/libBulletInverseDynamics_linux_amd64.a
           cp -v ./src/BulletCollision/libBulletCollision.a ${{ github.workspace }}/libBulletCollision_linux_amd64.a
+          cp -v ./src/LinearMath/libLinearMath.a ${{ github.workspace }}/libLinearMath_linux_amd64.a
           ls -laR ${{ github.workspace }}
       - name: Upload library
         uses: actions/upload-artifact@v6
@@ -426,7 +426,7 @@ jobs:
           cp -v libBulletInverseDynamics.a libBulletInverseDynamics_windows_amd64.a
           cp -v libBulletCollision.a libBulletCollision_windows_amd64.a
           cp -v libLinearMath.a libLinearMath_windows_amd64.a
-          ls -laR ${{ github.workspace }}
+          Get-ChildItem
       - name: Upload library
         uses: actions/upload-artifact@v6
         with:
