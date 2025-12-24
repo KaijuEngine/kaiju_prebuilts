@@ -442,7 +442,7 @@ jobs:
           git switch --detach ${{ env.VERSION_BULLET3 }}
           mkdir -p ${{ runner.temp }}/bullet3/build_static
           cd ${{ runner.temp }}/bullet3/build_static
-          cmake ../ \
+          cmake .. -G Xcode \
             "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_SHARED_LIBS=OFF \
@@ -489,7 +489,7 @@ jobs:
           git switch --detach ${{ env.VERSION_BULLET3 }}
           mkdir -p ${{ runner.temp }}/bullet3/build_static
           cd ${{ runner.temp }}/bullet3/build_static
-          cmake ../ \
+          cmake .. -G Xcode \
             "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" \
             "-DCMAKE_TOOLCHAIN_FILE=${{ runner.temp }}/IosCMakeToolchain/ios.toolchain.cmake" \
             -DPLATFORM=OS64COMBINED \
