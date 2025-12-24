@@ -411,7 +411,7 @@ jobs:
             -DUSE_GLUT=OFF `
             -DBULLET2_MULTITHREADING=ON
           mingw32-make -j 2
-          ls -la ../../lib
+          Get-ChildItem ../../lib
           cd ../../
           pwd
           find . -type f -iname "libBullet*.a"
