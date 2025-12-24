@@ -308,21 +308,20 @@ jobs:
             -DUSE_GLUT=OFF \
             -DINSTALL_LIBS=ON
           make -j 2
-          find . -type f -iname "lib*.a"
+          find . -type f -iname "lib*.a" -exec cp -v {} ${{ github.workspace }}/ \;
       - name: Rename library files
-        working-directory: ${{ runner.temp }}/bullet3/build_static
         run: |
-          cp -v ./src/Bullet3Geometry/libBullet3Geometry.a ${{ github.workspace }}/libBullet3Geometry_linux_arm64.a
-          cp -v ./src/BulletDynamics/libBulletDynamics.a ${{ github.workspace }}/libBulletDynamics_linux_arm64.a
-          cp -v ./src/Bullet3Collision/libBullet3Collision.a ${{ github.workspace }}/libBullet3Collision_linux_arm64.a
-          cp -v ./src/Bullet3Common/libBullet3Common.a ${{ github.workspace }}/libBullet3Common_linux_arm64.a
-          cp -v ./src/Bullet3OpenCL/libBullet3OpenCL_clew.a ${{ github.workspace }}/libBullet3OpenCL_clew_linux_arm64.a
-          cp -v ./src/BulletSoftBody/libBulletSoftBody.a ${{ github.workspace }}/libBulletSoftBody_linux_arm64.a
-          cp -v ./src/Bullet3Serialize/Bullet2FileLoader/libBullet2FileLoader.a ${{ github.workspace }}/libBullet2FileLoader_linux_arm64.a
-          cp -v ./src/Bullet3Dynamics/libBullet3Dynamics.a ${{ github.workspace }}/libBullet3Dynamics_linux_arm64.a
-          cp -v ./src/BulletInverseDynamics/libBulletInverseDynamics.a ${{ github.workspace }}/libBulletInverseDynamics_linux_arm64.a
-          cp -v ./src/BulletCollision/libBulletCollision.a ${{ github.workspace }}/libBulletCollision_linux_arm64.a
-          cp -v ./src/LinearMath/libLinearMath.a ${{ github.workspace }}/libLinearMath_linux_arm64.a
+          mv -v libBullet3Geometry.a libBullet3Geometry_linux_arm64.a
+          mv -v libBulletDynamics.a libBulletDynamics_linux_arm64.a
+          mv -v libBullet3Collision.a libBullet3Collision_linux_arm64.a
+          mv -v libBullet3Common.a libBullet3Common_linux_arm64.a
+          mv -v libBullet3OpenCL_clew.a libBullet3OpenCL_clew_linux_arm64.a
+          mv -v libBulletSoftBody.a libBulletSoftBody_linux_arm64.a
+          mv -v libBullet2FileLoader.a libBullet2FileLoader_linux_arm64.a
+          mv -v libBullet3Dynamics.a libBullet3Dynamics_linux_arm64.a
+          mv -v libBulletInverseDynamics.a libBulletInverseDynamics_linux_arm64.a
+          mv -v libBulletCollision.a libBulletCollision_linux_arm64.a
+          mv -v libLinearMath.a libLinearMath_linux_arm64.a
           ls -laR ${{ github.workspace }}
       - name: Upload library
         uses: actions/upload-artifact@v6
@@ -360,21 +359,20 @@ jobs:
             -DUSE_GLUT=OFF \
             -DINSTALL_LIBS=ON
           make -j 2
-          find . -type f -iname "lib*.a"
+          find . -type f -iname "lib*.a" -exec cp -v {} ${{ github.workspace }}/ \;
       - name: Rename library files
-        working-directory: ${{ runner.temp }}/bullet3/build_static
         run: |
-          cp -v ./src/Bullet3Geometry/libBullet3Geometry.a ${{ github.workspace }}/libBullet3Geometry_linux_amd64.a
-          cp -v ./src/BulletDynamics/libBulletDynamics.a ${{ github.workspace }}/libBulletDynamics_linux_amd64.a
-          cp -v ./src/Bullet3Collision/libBullet3Collision.a ${{ github.workspace }}/libBullet3Collision_linux_amd64.a
-          cp -v ./src/Bullet3Common/libBullet3Common.a ${{ github.workspace }}/libBullet3Common_linux_amd64.a
-          cp -v ./src/Bullet3OpenCL/libBullet3OpenCL_clew.a ${{ github.workspace }}/libBullet3OpenCL_clew_linux_amd64.a
-          cp -v ./src/BulletSoftBody/libBulletSoftBody.a ${{ github.workspace }}/libBulletSoftBody_linux_amd64.a
-          cp -v ./src/Bullet3Serialize/Bullet2FileLoader/libBullet2FileLoader.a ${{ github.workspace }}/libBullet2FileLoader_linux_amd64.a
-          cp -v ./src/Bullet3Dynamics/libBullet3Dynamics.a ${{ github.workspace }}/libBullet3Dynamics_linux_amd64.a
-          cp -v ./src/BulletInverseDynamics/libBulletInverseDynamics.a ${{ github.workspace }}/libBulletInverseDynamics_linux_amd64.a
-          cp -v ./src/BulletCollision/libBulletCollision.a ${{ github.workspace }}/libBulletCollision_linux_amd64.a
-          cp -v ./src/LinearMath/libLinearMath.a ${{ github.workspace }}/libLinearMath_linux_amd64.a
+          mv -v libBullet3Geometry.a libBullet3Geometry_linux_amd64.a
+          mv -v libBulletDynamics.a libBulletDynamics_linux_amd64.a
+          mv -v libBullet3Collision.a libBullet3Collision_linux_amd64.a
+          mv -v libBullet3Common.a libBullet3Common_linux_amd64.a
+          mv -v libBullet3OpenCL_clew.a libBullet3OpenCL_clew_linux_amd64.a
+          mv -v libBulletSoftBody.a libBulletSoftBody_linux_amd64.a
+          mv -v libBullet2FileLoader.a libBullet2FileLoader_linux_amd64.a
+          mv -v libBullet3Dynamics.a libBullet3Dynamics_linux_amd64.a
+          mv -v libBulletInverseDynamics.a libBulletInverseDynamics_linux_amd64.a
+          mv -v libBulletCollision.a libBulletCollision_linux_amd64.a
+          mv -v libLinearMath.a libLinearMath_linux_amd64.a
           ls -laR ${{ github.workspace }}
       - name: Upload library
         uses: actions/upload-artifact@v6
@@ -415,17 +413,17 @@ jobs:
           cp -v ${{ runner.temp }}/bullet3/build_mingw_static/lib/lib*.a ${{ github.workspace }}/
       - name: Rename library files
         run: |
-          cp -v libBullet3Geometry.a libBullet3Geometry_windows_amd64.a
-          cp -v libBulletDynamics.a libBulletDynamics_windows_amd64.a
-          cp -v libBullet3Collision.a libBullet3Collision_windows_amd64.a
-          cp -v libBullet3Common.a libBullet3Common_windows_amd64.a
-          cp -v libBullet3OpenCL_clew.a libBullet3OpenCL_clew_windows_amd64.a
-          cp -v libBulletSoftBody.a libBulletSoftBody_windows_amd64.a
-          cp -v libBullet2FileLoader.a libBullet2FileLoader_windows_amd64.a
-          cp -v libBullet3Dynamics.a libBullet3Dynamics_windows_amd64.a
-          cp -v libBulletInverseDynamics.a libBulletInverseDynamics_windows_amd64.a
-          cp -v libBulletCollision.a libBulletCollision_windows_amd64.a
-          cp -v libLinearMath.a libLinearMath_windows_amd64.a
+          mv -v libBullet3Geometry.a libBullet3Geometry_windows_amd64.a
+          mv -v libBulletDynamics.a libBulletDynamics_windows_amd64.a
+          mv -v libBullet3Collision.a libBullet3Collision_windows_amd64.a
+          mv -v libBullet3Common.a libBullet3Common_windows_amd64.a
+          mv -v libBullet3OpenCL_clew.a libBullet3OpenCL_clew_windows_amd64.a
+          mv -v libBulletSoftBody.a libBulletSoftBody_windows_amd64.a
+          mv -v libBullet2FileLoader.a libBullet2FileLoader_windows_amd64.a
+          mv -v libBullet3Dynamics.a libBullet3Dynamics_windows_amd64.a
+          mv -v libBulletInverseDynamics.a libBulletInverseDynamics_windows_amd64.a
+          mv -v libBulletCollision.a libBulletCollision_windows_amd64.a
+          mv -v libLinearMath.a libLinearMath_windows_amd64.a
           Get-ChildItem
       - name: Upload library
         uses: actions/upload-artifact@v6
