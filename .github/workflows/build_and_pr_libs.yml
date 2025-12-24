@@ -598,51 +598,51 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: "Copy in binary: libsoloud_linux_arm64.a"
+      - name: "Copy in library: libsoloud_linux_arm64.a"
         uses: actions/download-artifact@v7
         with:
           name: libsoloud_linux_arm64.a
-      - name: "Copy in binary: libsoloud_linux_amd64.a"
+      - name: "Copy in library: libsoloud_linux_amd64.a"
         uses: actions/download-artifact@v7
         with:
           name: libsoloud_linux_amd64.a
-      - name: "Copy in binary: libsoloud_windows_amd64.a"
+      - name: "Copy in library: libsoloud_windows_amd64.a"
         uses: actions/download-artifact@v7
         with:
           name: libsoloud_windows_amd64.a
-      - name: "Copy in binary: libsoloud_darwin_arm64.a"
+      - name: "Copy in library: libsoloud_darwin_arm64.a"
         uses: actions/download-artifact@v7
         with:
           name: libsoloud_darwin_arm64.a
-      - name: "Copy in binary: libsoloud_ios.a"
+      - name: "Copy in library: libsoloud_ios.a"
         uses: actions/download-artifact@v7
         with:
           name: libsoloud_ios.a
-      - name: "Copy in binary: libsoloud_android.a"
+      - name: "Copy in library: libsoloud_android.a"
         uses: actions/download-artifact@v7
         with:
           name: libsoloud_android.a
-      - name: "Copy in binary: bullet3_libs_linux_arm64"
+      - name: "Copy in library: bullet3_libs_linux_arm64"
         uses: actions/download-artifact@v7
         with:
           name: bullet3_libs_linux_arm64
-      - name: "Copy in binary: bullet3_libs_linux_amd64"
+      - name: "Copy in library: bullet3_libs_linux_amd64"
         uses: actions/download-artifact@v7
         with:
           name: bullet3_libs_linux_amd64
-      - name: "Copy in binary: bullet3_libs_windows_amd64"
+      - name: "Copy in library: bullet3_libs_windows_amd64"
         uses: actions/download-artifact@v7
         with:
           name: bullet3_libs_windows_amd64
-      - name: "Copy in binary: bullet3_libs_darwin_arm64"
+      - name: "Copy in library: bullet3_libs_darwin_arm64"
         uses: actions/download-artifact@v7
         with:
           name: bullet3_libs_darwin_arm64
-      - name: "Copy in binary: bullet3_libs_ios"
+      - name: "Copy in library: bullet3_libs_ios"
         uses: actions/download-artifact@v7
         with:
           name: bullet3_libs_ios
-      - name: "Copy in binary: bullet3_libs_android"
+      - name: "Copy in library: bullet3_libs_android"
         uses: actions/download-artifact@v7
         with:
           name: bullet3_libs_android
