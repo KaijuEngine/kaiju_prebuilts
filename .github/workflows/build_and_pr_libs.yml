@@ -453,7 +453,7 @@ jobs:
             -DBUILD_UNIT_TESTS=OFF \
             -DUSE_GLUT=OFF \
             -DINSTALL_LIBS=ON
-          make -j 2
+          cmake --build . --config Release
           find . -type f -iname "lib*.a" -exec cp -v {} ${{ github.workspace }}/ \;
       - name: Rename library files
         run: |
@@ -502,7 +502,7 @@ jobs:
             -DBUILD_UNIT_TESTS=OFF \
             -DUSE_GLUT=OFF \
             -DINSTALL_LIBS=ON
-          make -j 2
+          cmake --build . --config Release
           find . -type f -iname "lib*.a" -exec cp -v {} ${{ github.workspace }}/ \;
       - name: Rename library files
         run: |
