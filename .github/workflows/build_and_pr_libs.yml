@@ -413,7 +413,7 @@ jobs:
           mingw32-make -j 2
           pwd
           Get-ChildItem ${{ runner.temp }}
-          find ${{ runner.temp }} -type f -iname "libBullet*.a"
+          find ${{ runner.temp }}
       - name: Rename library files
         working-directory: ${{ runner.temp }}/bullet3/build_mingw_static
         run: |
