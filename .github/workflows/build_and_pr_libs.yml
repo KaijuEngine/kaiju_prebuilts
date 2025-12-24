@@ -435,14 +435,6 @@ jobs:
     name: Build Bullet3 (darwin/arm64)
     runs-on: macos-15
     steps:
-#      - name: Install Build Dependencies (packages)
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install -y --no-install-recommends \
-#            build-essential \
-#            ca-certificates \
-#            cmake \
-#            git
       - name: Build Bullet3
         run: |
           git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
@@ -481,4 +473,53 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: bullet3_libs_darwin_arm64
+          path: ${{ github.workspace }}/*.a
+
+  build-bullet3-ios:
+    name: Build Bullet3 (ios)
+    runs-on: macos-15
+    steps:
+      - name: Build Bullet3
+        run: |
+          git clone https://github.com/OlivierLDff/IosCMakeToolchain.git ${{ runner.temp }}/IosCMakeToolchain
+          cd ${{ runner.temp }}/IosCMakeToolchain
+          git switch --detach ${{ env.VERSION_IOSCMAKETOOLCHAIN }}
+          git clone https://github.com/bulletphysics/bullet3.git ${{ runner.temp }}/bullet3
+          cd ${{ runner.temp }}/bullet3
+          git switch --detach ${{ env.VERSION_BULLET3 }}
+          mkdir -p ${{ runner.temp }}/bullet3/build_static
+          cd ${{ runner.temp }}/bullet3/build_static
+          cmake ../ \
+            "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" \
+            "-DCMAKE_TOOLCHAIN_FILE=${{ runner.temp }}/IosCMakeToolchain/ios.toolchain.cmake" \
+            -DPLATFORM=OS64COMBINED \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DBUILD_CPU_DEMOS=OFF \
+            -DBUILD_OPENGL3_DEMOS=OFF \
+            -DBUILD_BULLET2_DEMOS=OFF \
+            -DBUILD_EXTRAS=OFF \
+            -DBUILD_UNIT_TESTS=OFF \
+            -DUSE_GLUT=OFF \
+            -DINSTALL_LIBS=ON
+          make -j 2
+          find . -type f -iname "lib*.a" -exec cp -v {} ${{ github.workspace }}/ \;
+      - name: Rename library files
+        run: |
+          mv -v libBullet3Geometry.a libBullet3Geometry_ios.a
+          mv -v libBulletDynamics.a libBulletDynamics_ios.a
+          mv -v libBullet3Collision.a libBullet3Collision_ios.a
+          mv -v libBullet3Common.a libBullet3Common_ios.a
+          mv -v libBullet3OpenCL_clew.a libBullet3OpenCL_clew_ios.a
+          mv -v libBulletSoftBody.a libBulletSoftBody_ios.a
+          mv -v libBullet2FileLoader.a libBullet2FileLoader_ios.a
+          mv -v libBullet3Dynamics.a libBullet3Dynamics_ios.a
+          mv -v libBulletInverseDynamics.a libBulletInverseDynamics_ios.a
+          mv -v libBulletCollision.a libBulletCollision_ios.a
+          mv -v libLinearMath.a libLinearMath_ios.a
+          ls -laR ${{ github.workspace }}
+      - name: Upload library
+        uses: actions/upload-artifact@v6
+        with:
+          name: bullet3_libs_ios
           path: ${{ github.workspace }}/*.a
