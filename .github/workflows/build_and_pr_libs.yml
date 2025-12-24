@@ -411,10 +411,9 @@ jobs:
             -DUSE_GLUT=OFF `
             -DBULLET2_MULTITHREADING=ON
           mingw32-make -j 2
-          Get-ChildItem ../../lib
-          cd ../../
           pwd
-          find . -type f -iname "libBullet*.a"
+          Get-ChildItem ${{ runner.temp }}
+          find ${{ runner.temp }} -type f -iname "libBullet*.a"
       - name: Rename library files
         working-directory: ${{ runner.temp }}/bullet3/build_mingw_static
         run: |
