@@ -82,3 +82,21 @@ cd build_static
 cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DBUILD_CPU_DEMOS=OFF -DBUILD_OPENGL3_DEMOS=OFF -DBUILD_BULLET2_DEMOS=OFF -DBUILD_EXTRAS=OFF -DBUILD_UNIT_TESTS=OFF -DUSE_GLUT=OFF -DINSTALL_LIBS=ON
 make -j$(nproc)
 ```
+
+## Cross-compilation
+
+A helper script is provided to cross-compile both Bullet3 and SoLoud for a
+target architecture. It requires the corresponding `<arch>-linux-gnu-gcc` / `g++`
+toolchain to be installed.
+
+```sh
+# Build for RISC-V 64
+./build-libs.sh riscv64
+
+# Build for ARM 64 (aarch64)
+./build-libs.sh aarch64
+```
+
+The script clones the upstream repositories into a temporary directory,
+cross-compiles static libraries, and copies them into this folder with the
+correct `_nix_<goarch>` naming convention.
